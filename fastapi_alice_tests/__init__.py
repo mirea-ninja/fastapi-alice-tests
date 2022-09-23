@@ -78,17 +78,13 @@ class Session:
         self.session = {
             "message_id": 0,
             "new": True,
-            "session_id": "2eac4854-fce721f3-b845abba-{}".format(self.skill.sessions["current_id"]),
+            "session_id": f'2eac4854-fce721f3-b845abba-{self.skill.sessions["current_id"]}',
             "skill_id": self.skill.skill_id,
-            "user": {
-                "user_id": user_id
-            },
-            "application": {
-                "application_id": user_id
-            },
-
-            "user_id": user_id
+            "user": {"user_id": user_id},
+            "application": {"application_id": user_id},
+            "user_id": user_id,
         }
+
 
         self.send(command, command=command)
 
@@ -110,7 +106,7 @@ class Session:
             req["payload"] = button["payload"]
             req["type"] = "ButtonPressed"
 
-        self.send_request(req, "[{}]".format(button["title"]))
+        self.send_request(req, f'[{button["title"]}]')
 
     def send(self, text, command="", nlu=None):
         """
@@ -175,18 +171,14 @@ class Session:
         """
         Print tail of the session history, order by message dates
         """
-        suff = ''
-        if len(self.messages) > tail:
-            suff = 'Latest {}\n\n'.format(tail)
-
+        suff = f'Latest {tail}\n\n' if len(self.messages) > tail else ''
         lines = [suff]
         for message_id in sorted(self.messages)[-tail:]:
             req, res = self.messages[message_id]
-            lines.append("Q: {}\nA: {}\n\n".format(req, res))
+            lines.append(f"Q: {req}\nA: {res}\n\n")
 
         if self.buttons:
-            lines.append(
-                '\n\n' + ' '.join(["[{}]".format(but["title"]) for but in self.buttons]))
+            lines.append('\n\n' + ' '.join([f'[{but["title"]}]' for but in self.buttons]))
 
         return ''.join(lines)
 
